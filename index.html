@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bowling Score Calculator</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+            text-align: center;
+        }
+        td {
+            padding: 0px;
+        }
+        th {
+            background-color: #f2f2f2;
+            padding: 10px;
+        }
+        .frame {
+            width: 10%;
+        }
+        .rolls {
+            display: flex;
+            justify-content: space-around;
+        }
+        td div.rolls div:nth-child(2) {
+            border-bottom: 1px solid black;
+            border-left: 1px solid black;
+        }
+        .score {
+            font-weight: bold;
+        }
+        #result {
+            font-size: 1.5em;
+        }
+        div {
+            width: 100%;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Bowling Score Calculator</h1>
+    <label for="rolls">Enter your rolls (separated by commas):</label>
+    <input type="text" id="rolls" name="rolls" required>
+    <p id="result"></p>
+    <table id="scoreTable">
+        <thead>
+            <tr>
+                <th class="frame">1</th>
+                <th class="frame">2</th>
+                <th class="frame">3</th>
+                <th class="frame">4</th>
+                <th class="frame">5</th>
+                <th class="frame">6</th>
+                <th class="frame">7</th>
+                <th class="frame">8</th>
+                <th class="frame">9</th>
+                <th class="frame">10</th>
+                <th class="frame">Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr id="scoresRow"></tr>
+        </tbody>
+    </table>
+    <script src="BowlingGame.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#rolls').on('keyup keydown paste', function() {
+                console.log("Testing");
+                const rollsInput = $('#rolls').val().trim();
+                const rolls = rollsInput.split(',').map(Number);
+                const game = new BowlingGame();
+                const frameScores = [];
+                rolls.forEach(pins => {
+                    game.roll(pins);
+                    frameScores.push(game.score());
+                });
+                const score = game.score();
+                
+                const scoresRow = $('#scoresRow');
+                scoresRow.empty();
+
+                let frameIndex = 0;
+                for (let frame = 0; frame < 10; frame++) {
+                    const frameCell = $('<td></td>');
+                    const rollsDiv = $('<div class="rolls"></div>');
+                    const scoreDiv = $('<div class="score"></div>');
+
+                    let frameIncrement = 2;
+                    let frameHtml = "";
+
+                    if (game.rolls[frameIndex] === 10) { // Strike
+                        frameHtml = '<div></div><div>X</div>';
+                        frameIncrement = 1;
+                    } else if (game.rolls[frameIndex] + game.rolls[frameIndex + 1] === 10) { // Spare
+                        frameHtml = `<div>${game.rolls[frameIndex]}</div><div>/</div>`;
+                    } else { // Open frame
+                        frameHtml = `<div>${game.rolls[frameIndex] || 0}</div><div>${game.rolls[frameIndex + 1] || 0}</div>`;
+                    }
+                    rollsDiv.html(frameHtml);
+                    scoreDiv.text(frameScores[frameIndex+1] || 0);
+                    frameIndex += frameIncrement;
+                    frameCell.append(rollsDiv).append(scoreDiv);
+                    scoresRow.append(frameCell);
+                }
+                scoresRow.append(`<td id="result">${score}</td>`);
+            });
+        });
+    </script>
+</body>
+</html>
