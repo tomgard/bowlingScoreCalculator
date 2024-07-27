@@ -1,0 +1,19 @@
+{
+    "name": "bowlingcalculator",
+    "version": "1.0.0",
+    "description": "",
+    "main": "bowling.js",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "test": "mocha"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "chai": "^4.5.0",
+        "mocha": "^10.7.0"
+    }
+}
